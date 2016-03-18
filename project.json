@@ -1,12 +1,8 @@
 {
     "version": "1.0.0-*",
     "dependencies": {
-        "EntityFramework.Sqlite": "7.0.0-rc1-final",
-        "EntityFramework.Commands": "7.0.0-rc1-final",
+        "EntityFramework.Core": "7.0.0-rc1-final",
         "sqlite-net-pcl": "1.1.1"
-    },
-    "commands": {
-        "ef": "EntityFramework.Commands"
     },
     "frameworks": {
         "dnx451": {

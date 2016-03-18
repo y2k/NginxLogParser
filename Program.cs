@@ -34,6 +34,10 @@ namespace Y2k.NginxLogParser
         public LogEntry Parse(string text)
         {
             var parts = Pattern.Match(text).Groups.Cast<Group>().Select(s => s.Value).Skip(1).ToList();
+            var queries = Regex
+                .Matches(parts[3], "[\\?\\&](.+?)=([^\\&]+)")
+                .Cast<Match>()
+                .ToDictionary(s => s.Groups[1].Value, s => s.Groups[2].Value);
             return new LogEntry
             {
                 Ip = parts[0],
@@ -45,10 +49,15 @@ namespace Y2k.NginxLogParser
                 Length = long.Parse(parts[6]),
                 Referer = parts[7] == "-" ? "" : parts[7],
                 UserAgent = parts[8],
+
+                Width = queries.Where(s => s.Key == "width").Select(s => int.Parse(s.Value)).FirstOrDefault(),
+                Height = queries.Where(s => s.Key == "height").Select(s => int.Parse(s.Value)).FirstOrDefault(),
+                Image = queries.Where(s => s.Key == "url").Select(s => Uri.UnescapeDataString(s.Value)).FirstOrDefault(),
             };
         }
     }
 
+    [Table("stats")]
     public class LogEntry
     {
         [PrimaryKey, AutoIncrement]
@@ -62,6 +71,11 @@ namespace Y2k.NginxLogParser
         public string UserAgent { get; set; }
         public string Url { get; set; }
         public string Referer { get; set; }
+
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Image { get; set; }
+        public bool IsNorm { get; set; }
 
         public override string ToString()
         {
