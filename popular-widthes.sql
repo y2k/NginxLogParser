@@ -1,4 +1,7 @@
-select group_concat(width) as widthes, *
+select 
+	group_concat(width) as widthes, 
+	Image,
+	*
 from (
 	select *
 	from stats
